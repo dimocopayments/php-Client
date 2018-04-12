@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(dirname(__FILE__)).'/vendor/autoload.php');
+require_once(dirname(dirname(__FILE__)).'/autoload.php');
 
 $client = new \PaymentGateway\Client\Client('username', 'password', 'api-key', 'shared-secret');
 $valid = $client->validateCallbackWithGlobals();

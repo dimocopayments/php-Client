@@ -1,5 +1,7 @@
 <?php
 
+require_once(dirname(dirname(__FILE__)).'/autoload.php');
+
 $client = new \PaymentGateway\Client\Client('username', 'password', 'apiKey', 'sharedSecret');
 
 $customer = new \PaymentGateway\Client\Data\Customer();
@@ -25,7 +27,7 @@ if (isset($token)) {
 }
 
 //for recurring transactions
-if ($isRecurringTransaction) {
+if (isset($isRecurringTransaction)) {
     $debit->setReferenceTransactionId($referenceIdFromFirstTransaction);
 }
 

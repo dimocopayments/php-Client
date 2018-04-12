@@ -1,7 +1,13 @@
-#Payment Gateway Client
+Payment Gateway Client
 ==============
 
-1. Instantiate the "PaymentGateway\Client\Client" with your credentials.
+1.) Include the autoloader
+```
+require_once('/path/to/client/autoload.php');
+```
+
+2.) Instantiate the "PaymentGateway\Client\Client" with your credentials, send the transaction and react on the result.
+>>>>>>> master
 
 ```
 $client = new Client("username", "password", "apiKey", "sharedSecret");
