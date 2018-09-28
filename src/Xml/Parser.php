@@ -7,12 +7,14 @@ use PaymentGateway\Client\Data\Result\CreditcardData;
 use PaymentGateway\Client\Data\Result\IbanData;
 use PaymentGateway\Client\Data\Result\PhoneData;
 use PaymentGateway\Client\Data\Result\ResultData;
+use PaymentGateway\Client\Exception\ClientException;
 use PaymentGateway\Client\Exception\InvalidValueException;
 use PaymentGateway\Client\Schedule\ScheduleError;
 use PaymentGateway\Client\Schedule\ScheduleResult;
 use PaymentGateway\Client\Transaction\Error;
 use PaymentGateway\Client\Transaction\Result;
 use PaymentGateway\Client\Callback\Result as CallbackResult;
+
 
 /**
  * Class Parser
@@ -144,6 +146,7 @@ class Parser {
                 case 'chargebackReversalData':
                     $reversalData = $this->parseChargebackReversalData($child);
                     $result->setChargebackReversalData($reversalData);
+                    break;
                 case 'returnData':
                     $result->setReturnData($this->parseReturnData($child));
                     break;
@@ -215,6 +218,9 @@ class Parser {
             }
         }
 
+        if ($success == false) {
+            throw new ClientException($error);
+        }
         if (count($result) === 1 && array_key_exists('undefined', $result)) {
             $result = $result['undefined'];
         }
