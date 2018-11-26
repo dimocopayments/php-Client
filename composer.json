@@ -1,6 +1,6 @@
 {
-    "name": "dimocopayments/php-Client",
-    "description": "Client for PHP",
+    "name": "dimocopayments/php-client",
+    "description": "Payment Gateway Client for PHP",
     "keywords": [],
     "license": "MIT",
     "type": "project",

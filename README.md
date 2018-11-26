@@ -1,7 +1,25 @@
 Payment Gateway Client
 ==============
 
-1.) Include the autoloader
+# Installation
+
+Add this package as dependency to your composer.json file:
+
+```
+{
+    "require": {
+        "dimocopayments/php-client": "dev-master"
+    }
+}
+```
+
+(Refer to [Composer Documentation](https://github.com/composer/composer/blob/master/doc/00-intro.md#introduction) if you are not
+familiar with composer)
+
+
+# Usage
+
+1.) Include the autoloader (if not already done via Composer autoloader)
 ```
 require_once('/path/to/client/autoload.php');
 ```
@@ -15,6 +33,7 @@ $customer = new Customer();
 $customer->setBillingCountry("AT")
 	->setEmail("customer@email.test");
 
+$debit = new Debit();
 $debit->setTransactionId("uniqueTransactionReference")
 	->setSuccessUrl($redirectUrl)
 	->setCancelUrl($redirectUrl)
