@@ -1,32 +1,26 @@
-Payment Gateway Client
+PaymentGateway Client
 ==============
 
-# Installation
+## Installation via composer:
 
-Add this package as dependency to your composer.json file:
-
-```
-{
-    "require": {
-        "dimocopayments/php-client": "dev-master"
-    }
-}
+```sh
+composer require dimocopayments/php-client
 ```
 
-(Refer to [Composer Documentation](https://github.com/composer/composer/blob/master/doc/00-intro.md#introduction) if you are not
-familiar with composer)
+## Usage:
 
+```php
+<?php
 
-# Usage
+use PaymentGateway\Client\Client;
+use PaymentGateway\Client\Data\Customer;
+use PaymentGateway\Client\Transaction\Debit;
+use PaymentGateway\Client\Transaction\Result;
 
-1.) Include the autoloader (if not already done via Composer autoloader)
-```
-require_once('/path/to/client/autoload.php');
-```
+// Include the autoloader (if not already done via Composer autoloader)
+require_once('path/to/initClientAutoload.php');
 
-2.) Instantiate the "PaymentGateway\Client\Client" with your credentials, send the transaction and react on the result.
-
-```
+// Instantiate the "PaymentGateway\Client\Client" with your credentials
 $client = new Client("username", "password", "apiKey", "sharedSecret");
 
 $customer = new Customer();
@@ -34,7 +28,11 @@ $customer->setBillingCountry("AT")
 	->setEmail("customer@email.test");
 
 $debit = new Debit();
-$debit->setTransactionId("uniqueTransactionReference")
+
+// define your transaction ID: e.g. 'myId-'.date('Y-m-d').'-'.uniqid()
+$merchantTransactionId = 'your_transaction_id'; // must be unique
+
+$debit->setTransactionId($merchantTransactionId)
 	->setSuccessUrl($redirectUrl)
 	->setCancelUrl($redirectUrl)
 	->setCallbackUrl($callbackUrl)
@@ -42,10 +40,33 @@ $debit->setTransactionId("uniqueTransactionReference")
 	->setCurrency('EUR')
 	->setCustomer($customer);
 
+// send the transaction
 $result = $client->debit($debit);
 
+// now handle the result
 if ($result->isSuccess()) {
 	//act depending on $result->getReturnType()
+	
+    $gatewayReferenceId = $result->getReferenceId(); //store it in your database
+    
+    if ($result->getReturnType() == Result::RETURN_TYPE_ERROR) {
+        //error handling
+        $errors = $result->getErrors();
+        //cancelCart();
+    
+    } elseif ($result->getReturnType() == Result::RETURN_TYPE_REDIRECT) {
+        //redirect the user
+        header('Location: '.$result->getRedirectUrl());
+        die;
+        
+    } elseif ($result->getReturnType() == Result::RETURN_TYPE_PENDING) {
+        //payment is pending, wait for callback to complete
+    
+        //setCartToPending();
+    
+    } elseif ($result->getReturnType() == Result::RETURN_TYPE_FINISHED) {
+        //payment is finished, update your cart/payment transaction
+    
+        //finishCart();
+    }
 }
-
-```

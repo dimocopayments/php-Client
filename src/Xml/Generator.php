@@ -8,6 +8,7 @@ use PaymentGateway\Client\Data\IbanCustomer;
 use PaymentGateway\Client\Data\Request;
 use PaymentGateway\Client\Schedule\ScheduleData;
 use PaymentGateway\Client\Exception\TypeException;
+use PaymentGateway\Client\StatusApi\StatusRequestData;
 use PaymentGateway\Client\Transaction\Base\AbstractTransaction;
 use PaymentGateway\Client\Transaction\Base\AbstractTransactionWithReference;
 use PaymentGateway\Client\Transaction\Base\AmountableInterface;
@@ -172,6 +173,37 @@ class Generator {
         }
 
         $root->appendChild($scheduleNode);
+        $this->document->appendChild($root);
+
+        return $this->document->saveXML();
+    }
+
+    /**
+     * @param StatusRequestData $statusRequestData
+     * @param                   $username
+     * @param                   $password
+     *
+     * @return string
+     * @throws TypeException
+     */
+    public function generateStatusRequestXml(StatusRequestData $statusRequestData, $username, $password) {
+
+        $this->document = new \DOMDocument('1.0', 'utf-8');
+        $this->document->formatOutput = true;
+        $root = $this->document->createElementNS($this->namespaceRoot . '/Schema/V2/Status', 'status');
+
+        $this->_appendTextNode($root, 'username', $username);
+        $this->_appendTextNode($root, 'password', $password);
+
+        $statusRequestData->validate();
+
+        if ($statusRequestData->getTransactionUuid()) {
+            $this->_appendTextNode($root, 'transactionUuid', $statusRequestData->getTransactionUuid());
+        }
+        if ($statusRequestData->getMerchantTransactionId()) {
+            $this->_appendTextNode($root, 'merchantTransactionId', $statusRequestData->getMerchantTransactionId());
+        }
+
         $this->document->appendChild($root);
 
         return $this->document->saveXML();
@@ -392,7 +424,6 @@ class Generator {
             $this->_appendTextNode($node, 'issueNumber', $customer->getIssueNumber());
             $this->_appendTextNode($node, 'type', $customer->getType());
         }
-
 
         $parentNode->appendChild($node);
     }
